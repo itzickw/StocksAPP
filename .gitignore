@@ -1,0 +1,49 @@
+# 🔹 קבצי מערכת (Windows, macOS, Linux)
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 🔹 קבצי קומפילציה של C# (ASP.NET Core)
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+*.cache
+*.log
+
+# 🔹 תלות חיצוניות
+node_modules/
+venv/
+.env
+
+# 🔹 קבצי Python לא רצויים
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# 🔹 קבצי Qt (PySide6)
+*.qrc
+*.qmlc
+*.qtd
+
+# 🔹 הגדרות פרויקט ב-Visual Studio
+.vscode/
+*.suo
+*.user
+*.sln.cache
+*.vs/
+*.csproj.user
+
+# 🔹 קבצים שנוצרים על ידי Docker
+docker-compose.override.yml
+
+# 🔹 קבצי דיפלוי שלא צריך לשתף
+*.publish/
+*.swp
+
+# 🔹 קבצים של PyInstaller אם יוצרים קובץ הפעלה
+dist/
+build/
+*.spec
