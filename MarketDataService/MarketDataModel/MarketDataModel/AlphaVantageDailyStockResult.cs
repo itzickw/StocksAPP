@@ -6,9 +6,9 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace Market_data_model
+namespace MarketDataModel
 {
-    public class AlphaVantageStockResult
+    public class AlphaVantageDailyStockResult
     {
 
         [JsonPropertyName("1. open")]
@@ -46,7 +46,7 @@ namespace Market_data_model
     public class TimeSeriesResponse
     {
         [JsonPropertyName("Time Series (Daily)")]
-        public Dictionary<string, AlphaVantageStockResult> TimeSeries { get; set; }
+        public Dictionary<string, AlphaVantageDailyStockResult> TimeSeries { get; set; }
     }
 
 }
