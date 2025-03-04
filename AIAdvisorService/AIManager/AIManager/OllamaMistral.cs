@@ -62,13 +62,13 @@ internal class OllamaMistral
         return embeddings;
     }
 
-    public async Task<List<float>> QueryEnbedding(QueryModel query)
+    public async Task<List<float>> QueryEmbedding(string query)
     {
         // יצירת embedding לשאלה
         var embeddingRequest = new
         {
             model = "mistral:latest",
-            prompt = query.Question
+            prompt = query
         };
 
         var jsonContent = JsonSerializer.Serialize(embeddingRequest);

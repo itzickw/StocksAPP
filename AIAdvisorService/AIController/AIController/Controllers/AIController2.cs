@@ -15,15 +15,15 @@ public class AIController : ControllerBase
         _aiService = aiService;
     }
 
-    [HttpPost("embed")]
-    public async Task<IActionResult> EmbedDocument([FromBody] DocumentModel document)
+    [HttpPost("file-embedding")]
+    public async Task<IActionResult> EmbedDocument(string filePath)
     {
-        var result = await _aiService.EmbedDocumentAsync(document);
+        var result = await _aiService.EmbeddingDocumentAsync(filePath);
         return Ok(result);
     }
 
-    [HttpPost("query")]
-    public async Task<IActionResult> GetAnswer([FromBody] QueryModel query)
+    [HttpPost("AI-advice")]
+    public async Task<IActionResult> GetAnswer(string query)
     {
         var answer = await _aiService.GetAnswerAsync(query);
         return Ok(answer);

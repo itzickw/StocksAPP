@@ -22,11 +22,11 @@ public class AIService : IAIService
         textProcessing = new TextProcessing();
     }
 
-    public async Task<string> EmbedDocumentAsync(DocumentModel document)
+    public async Task<string> EmbeddingDocumentAsync(string filePath)
     {
         //string content = ExtracrTextFromPdf(document.FilePath);
 
-        var chunks = textProcessing.SplitFileIntoChunksWithOverlap(document.FilePath, 100, 20);
+        var chunks = textProcessing.SplitFileIntoChunksWithOverlap(filePath, 100, 20);
         //SplitTextIntoChunksWithOverlap(content, 100, 20);
 
         var ids = chunks.Select(_ => Guid.NewGuid().ToString()).ToList();
@@ -38,14 +38,14 @@ public class AIService : IAIService
     }
 
 
-    public async Task<string> GetAnswerAsync(QueryModel query)
+    public async Task<string> GetAnswerAsync(string query)
     {
         try
         {
-            var questionEmbedding = await ollamaMistralEmbedding.QueryEnbedding(query);
+            var questionEmbedding = await ollamaMistralEmbedding.QueryEmbedding(query);
             var queryResult = await chromaDBStore.ChromaQueryGetNearestNeighbors(questionEmbedding);
             var context = string.Join("\n", queryResult.Documents[0]);
-            var ragPrompt = $"Context: {context}\nQuestion: {query.Question}\nAnswer:";
+            var ragPrompt = $"Context: {context}\nQuestion: {query}\nAnswer:";
             Console.WriteLine($"query ragPrompt: {ragPrompt}");
             return await ollamaMistralEmbedding.GetAdvisorAsync(ragPrompt);
 

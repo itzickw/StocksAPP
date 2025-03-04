@@ -4,6 +4,6 @@ namespace AIManager;
 
 public interface IAIService
 {
-    Task<string> EmbedDocumentAsync(DocumentModel document);
-    Task<string> GetAnswerAsync(QueryModel query);
+    Task<string> EmbeddingDocumentAsync(string filePath);
+    Task<string> GetAnswerAsync(string query);
 }
