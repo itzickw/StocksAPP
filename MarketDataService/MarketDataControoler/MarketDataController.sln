@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35728.132
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarketDataControoler", "MarketDataControoler\MarketDataControoler.csproj", "{C8F60F04-866E-4B29-BDC1-2834F3B3B2A6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarketDataController", "MarketDataControoler\MarketDataController.csproj", "{C8F60F04-866E-4B29-BDC1-2834F3B3B2A6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarketDataManager", "..\MarketDataManager\MarketDataManager\MarketDataManager.csproj", "{862FEBB6-1DF9-4114-A0AE-F37E68E2DF5A}"
 EndProject
