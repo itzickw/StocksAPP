@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35728.132 d17.12
+VisualStudioVersion = 17.12.35728.132
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AIManager", "AIManager\AIManager.csproj", "{F9ED6B44-6959-42DA-9534-07987A8BD657}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AIModel", "..\AIModel\AIModel\AIModel.csproj", "{EF62DC24-6670-48F1-8388-B8BAD83D794E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{F9ED6B44-6959-42DA-9534-07987A8BD657}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F9ED6B44-6959-42DA-9534-07987A8BD657}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F9ED6B44-6959-42DA-9534-07987A8BD657}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF62DC24-6670-48F1-8388-B8BAD83D794E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF62DC24-6670-48F1-8388-B8BAD83D794E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF62DC24-6670-48F1-8388-B8BAD83D794E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF62DC24-6670-48F1-8388-B8BAD83D794E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
