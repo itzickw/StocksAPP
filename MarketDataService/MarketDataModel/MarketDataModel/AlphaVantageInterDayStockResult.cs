@@ -9,7 +9,7 @@ namespace MarketDataModel
 {
     public class AlphaVantageInterdayStockResult
     {
-        [JsonPropertyName("Time Series (1min)")] // שנה לפי ה-interval שבחרת: 5min, 15min וכו'
+        [JsonPropertyName("Time Series (1min)")] 
         public Dictionary<string, AlphaVantageDailyStockResult> TimeSeries { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -20,7 +21,6 @@ namespace MarketDataManager
             _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
         }
 
-        // פונקציה קיימת לנתונים יומיים
         public async Task<Dictionary<string, AlphaVantageDailyStockResult>> GetStockDataAsync(string symbol, string outputsize)
         {
             string url = $"{_dailyUrl}&symbol={symbol}&outputsize={outputsize}&apikey={_apiKey}";
@@ -43,7 +43,6 @@ namespace MarketDataManager
             return result.TimeSeries;
         }
 
-        // פונקציה קיימת לסינון לפי תקופה
         public async Task<Dictionary<string, AlphaVantageDailyStockResult>> GetStockDataForPeriodAsync(string symbol, int days)
         {
             string outputsize = days > 100 ? "full" : "compact";
@@ -80,5 +79,22 @@ namespace MarketDataManager
             var latestEntry = result.TimeSeries.OrderByDescending(kv => DateTime.Parse(kv.Key)).First();
             return latestEntry.Value;
         }
+
+        public async Task<Dictionary<string, AlphaVantageDailyStockResult>> GetWeeklyStockDataForPeriodAsync(string symbol, int days, int weeksInterval = 1)
+        {
+            string outputsize = days > 100 ? "full" : "compact";
+            var timeSeries = await GetStockDataAsync(symbol, outputsize);
+
+            var filteredData = timeSeries
+                .Where(kv => DateTime.Parse(kv.Key) >= DateTime.UtcNow.AddDays(-days))
+                .OrderBy(kv => kv.Key) // מסדרים את התאריכים בסדר עולה
+                .GroupBy(kv => CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(
+                    DateTime.Parse(kv.Key), CalendarWeekRule.FirstDay, DayOfWeek.Monday) / weeksInterval) // מחלקים לקבוצות לפי שבועות עם אינטרוולים
+                .Select(g => g.First()) // בוחרים את היום הראשון מכל קבוצה
+                .ToDictionary(kv => kv.Key, kv => kv.Value);
+
+            return filteredData;
+        }
+
     }
 }

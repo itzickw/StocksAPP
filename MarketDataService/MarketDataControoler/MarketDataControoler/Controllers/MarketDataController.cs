@@ -43,4 +43,20 @@ public class MarketDataController : ControllerBase
             return BadRequest(new { error = ex.Message });
         }
     }
+
+    [HttpGet("stock-data/weekly-stock-data")]
+    public async Task<IActionResult> GetStockData(
+    [FromQuery] string symbol,
+    [FromQuery] int days,
+    [FromQuery] int weeksInterval = 1)
+    {
+        if (string.IsNullOrWhiteSpace(symbol) || days <= 0)
+        {
+            return BadRequest("Invalid parameters.");
+        }
+
+        var result = await _alphaVantageService.GetWeeklyStockDataForPeriodAsync(symbol, days, weeksInterval);
+
+        return Ok(result);
+    }
 }
