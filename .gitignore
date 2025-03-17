@@ -15,18 +15,24 @@ obj/
 # 🔹 תלות חיצוניות
 node_modules/
 venv/
-.env
+env
+*.env
+*.venv
 
 # 🔹 קבצי Python לא רצויים
 __pycache__/
+*.py[cod]
 *.pyc
 *.pyo
 *.pyd
+*.swp
 
 # 🔹 קבצי Qt (PySide6)
 *.qrc
 *.qmlc
 *.qtd
+*.qm
+*.ui
 
 # 🔹 הגדרות פרויקט ב-Visual Studio
 .vscode/
