@@ -10,13 +10,13 @@ namespace AIManager;
 
 public class AIService : IAIService
 {
-    private readonly HttpClient _httpClient;
+    //private readonly HttpClient _httpClient;
     private readonly OllamaMistral ollamaMistralEmbedding;
     private readonly ChromaDB chromaDBStore;
     private readonly TextProcessing textProcessing;
     public AIService(HttpClient httpClient)
     {
-        _httpClient = httpClient;
+        //_httpClient = httpClient;
         ollamaMistralEmbedding = new OllamaMistral(httpClient);
         chromaDBStore = new ChromaDB(httpClient);
         textProcessing = new TextProcessing();

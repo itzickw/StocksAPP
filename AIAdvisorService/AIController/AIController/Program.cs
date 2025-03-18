@@ -7,7 +7,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddHttpClient<IAIService, AIService>(client =>
 {
-    client.Timeout = TimeSpan.FromMinutes(5);
+    client.Timeout = TimeSpan.FromMinutes(10);
 });
 
 builder.Services.AddControllers();

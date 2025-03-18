@@ -22,7 +22,7 @@ public class AIController : ControllerBase
         return Ok(result);
     }
 
-    [HttpPost("AI-advice")]
+    [HttpGet("AI-advice/{query}")]
     public async Task<IActionResult> GetAnswer(string query)
     {
         var answer = await _aiService.GetAnswerAsync(query);
