@@ -31,9 +31,24 @@ public class UsersController : ControllerBase
         return Ok(new { message = result });
     }
 
+    [HttpGet("callback")]
+    public IActionResult Callback([FromQuery] string access_token, [FromQuery] string code)
+    {
+        if (!string.IsNullOrEmpty(access_token))
+        {
+            // שמור את ה-token או בצע אימות
+            return Ok(new { Token = access_token });
+        }
+        else if (!string.IsNullOrEmpty(code))
+        {
+            // אם PropelAuth מחזיר קוד במקום טוקן, בצע קריאה נוספת ל-PropelAuth להמיר את ה-code ל-token
+            return Ok(new { Code = code });
+        }
+        return BadRequest("No token or code received");
+    }
 
-    [HttpDelete("delete")]
-    public async Task<IActionResult> DeleteUser([FromQuery] string email)
+    [HttpDelete("delete/{email}")]
+    public async Task<IActionResult> DeleteUser(string email)
     {
         Console.WriteLine($"📨 got mail to delete: '{email}'");
 
