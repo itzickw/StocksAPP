@@ -1,3 +1,5 @@
+using GatewayManager;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -6,6 +8,10 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddHttpClient<GatewayManager.GatewayManager>(client => {
+    client.Timeout = TimeSpan.FromMinutes(10);
+} );
+
 
 var app = builder.Build();
 
