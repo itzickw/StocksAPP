@@ -80,21 +80,19 @@ namespace MarketDataManager
             return latestEntry.Value;
         }
 
-        public async Task<Dictionary<string, AlphaVantageDailyStockResult>> GetWeeklyStockDataForPeriodAsync(string symbol, int days, int weeksInterval = 1)
+        public async Task<Dictionary<string, AlphaVantageDailyStockResult>> GetWeeklyStockDataForPeriodAsync(string symbol, int days, int daysInterval = 1)
         {
             string outputsize = days > 100 ? "full" : "compact";
             var timeSeries = await GetStockDataAsync(symbol, outputsize);
 
             var filteredData = timeSeries
-                .Where(kv => DateTime.Parse(kv.Key) >= DateTime.UtcNow.AddDays(-days))
-                .OrderBy(kv => kv.Key) // מסדרים את התאריכים בסדר עולה
-                .GroupBy(kv => CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(
-                    DateTime.Parse(kv.Key), CalendarWeekRule.FirstDay, DayOfWeek.Monday) / weeksInterval) // מחלקים לקבוצות לפי שבועות עם אינטרוולים
-                .Select(g => g.First()) // בוחרים את היום הראשון מכל קבוצה
-                .ToDictionary(kv => kv.Key, kv => kv.Value);
+                .Where(kv => DateTime.Parse(kv.Key) >= DateTime.UtcNow.AddDays(-days)) // מסנן לפי ימים
+                .OrderByDescending(kv => kv.Key) // מסדר את התאריכים בסדר עולה
+                .Select((kv, index) => new { Date = kv.Key, Value = kv.Value, Index = index }) // מוסיף אינדקס לכל תאריך
+                .Where(x => x.Index % daysInterval == 0) // בוחר כל אינטרבל ימים
+                .ToDictionary(x => x.Date, x => x.Value);
 
             return filteredData;
         }
-
     }
 }

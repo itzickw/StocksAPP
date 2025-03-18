@@ -44,7 +44,7 @@ public class MarketDataController : ControllerBase
         }
     }
 
-    [HttpGet("stock-data/weekly-stock-data")]
+    [HttpGet("weekly-stock-data")]
     public async Task<IActionResult> GetStockData(
     [FromQuery] string symbol,
     [FromQuery] int days,
