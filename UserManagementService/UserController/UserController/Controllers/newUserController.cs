@@ -36,10 +36,10 @@ namespace newUserController.Controllers
             return Unauthorized(new { message = "Invalid credentials" });
         }
 
-        [HttpDelete("delete")]
-        public IActionResult Delete([FromBody] UserDto userDto)
+        [HttpDelete("delete/{email}/{password}")]
+        public IActionResult Delete(string email, string password)
         {
-            if (_userManager.DeleteUser(userDto.Email, userDto.Password))
+            if (_userManager.DeleteUser(email, password))
                 return Ok(new { message = "User deleted successfully" });
             return NotFound(new { message = "Invalid email or password" });
         }
