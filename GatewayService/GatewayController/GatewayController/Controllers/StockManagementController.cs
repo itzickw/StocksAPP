@@ -30,7 +30,7 @@ namespace GatewayController.Controllers
             }
         }
 
-        [HttpPost("/holding")]
+        [HttpPost("holding")]
         public async Task<IActionResult> UserStocksHolding(User user)
         {
             try
@@ -59,7 +59,7 @@ namespace GatewayController.Controllers
             }
         }
 
-        [HttpPost("/transactions")]
+        [HttpPost("transactions")]
         public async Task<IActionResult> UserTransactions(User user)
         {
             try
