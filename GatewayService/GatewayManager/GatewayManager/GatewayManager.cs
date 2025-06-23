@@ -1,5 +1,6 @@
 ﻿using GatewayModel.Stocks;
 using GatewayModel.User;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,12 +16,12 @@ namespace GatewayManager
         private readonly MarketDataGateway marketDataGateway;
         private readonly AIAdvisorGateway aiAdvisorGateway;
 
-        public GatewayManager(HttpClient httpClient)
+        public GatewayManager(HttpClient httpClient, IOptions<ServiceUrlsConfig> serviceUrls )
         {
-            userGateway = new UserGateway(httpClient);
-            stocksGateway = new StocksGateway(httpClient);
-            marketDataGateway = new MarketDataGateway(httpClient);
-            aiAdvisorGateway = new AIAdvisorGateway(httpClient);
+            userGateway = new UserGateway(httpClient, serviceUrls);
+            stocksGateway = new StocksGateway(httpClient, serviceUrls);
+            marketDataGateway = new MarketDataGateway(httpClient, serviceUrls);
+            aiAdvisorGateway = new AIAdvisorGateway(httpClient, serviceUrls);
         }
 
         public Task<string> UserRegister(User user)

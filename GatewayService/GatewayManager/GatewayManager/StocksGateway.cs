@@ -1,17 +1,20 @@
 ﻿using System.Text;
 using System.Text.Json;
 using GatewayModel.Stocks;
+using Microsoft.Extensions.Options;
 
 namespace GatewayManager
 {
     internal class StocksGateway
     {
-        private readonly string stockServiceURL = "http://localhost:9250/api/Stock";
+        //private readonly string stockServiceURL = "http://localhost:9250/api/Stock";
+        private readonly string stockServiceURL;
         private readonly HttpClient httpClient;
 
-        internal StocksGateway(HttpClient httpClient)
+        internal StocksGateway(HttpClient httpClient, IOptions<ServiceUrlsConfig> serviceUrls)
         {
             this.httpClient = httpClient;
+            stockServiceURL = serviceUrls.Value.stockServiceURL;
         }
 
         internal async Task<string> GetUsrStocksHolding(string userId)

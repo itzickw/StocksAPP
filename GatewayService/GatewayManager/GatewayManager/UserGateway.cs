@@ -1,4 +1,5 @@
 ﻿using GatewayModel.User;
+using Microsoft.Extensions.Options;
 using System.Text;
 using System.Text.Json;
 
@@ -7,13 +8,15 @@ namespace GatewayManager
     internal class UserGateway
     {
         private readonly string userServiceUrl = "http://localhost:9150/api/Users";
-        private readonly string userV2ServiceUrl = "http://localhost:9150/api/v2/User";
+        private readonly string userV2ServiceUrl;
+        //private readonly string userV2ServiceUrl = "http://localhost:9150/api/v2/User";
 
         private readonly HttpClient _httpClient;
 
-        internal UserGateway(HttpClient httpClient)
+        internal UserGateway(HttpClient httpClient, IOptions<ServiceUrlsConfig> serviceUrls)
         {
             _httpClient = httpClient;
+            userV2ServiceUrl = serviceUrls.Value.userV2ServiceUrl;
         }
 
         internal async Task<string> UserRegister(User user)
@@ -84,7 +87,7 @@ namespace GatewayManager
         {
             var userJson = JsonSerializer.Serialize(user, new JsonSerializerOptions { WriteIndented = true });
             var userResponse = await _httpClient.PutAsync(
-                $"{userV2ServiceUrl}/update-password", new StringContent(userJson, Encoding.UTF8, "application/json")
+                $"{userV2ServiceUrl}/update", new StringContent(userJson, Encoding.UTF8, "application/json")
             );
             return await userResponse.Content.ReadAsStringAsync();
         }

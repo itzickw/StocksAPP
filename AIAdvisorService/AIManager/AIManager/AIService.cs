@@ -1,10 +1,12 @@
 ﻿using AIModel;
 using Azure;
+using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using UglyToad.PdfPig;
+
 
 namespace AIManager;
 
@@ -14,11 +16,11 @@ public class AIService : IAIService
     private readonly OllamaMistral ollamaMistralEmbedding;
     private readonly ChromaDB chromaDBStore;
     private readonly TextProcessing textProcessing;
-    public AIService(HttpClient httpClient)
+    public AIService(HttpClient httpClient, IOptions<ServiceUrlsConfig> serviceUrls)
     {
         //_httpClient = httpClient;
-        ollamaMistralEmbedding = new OllamaMistral(httpClient);
-        chromaDBStore = new ChromaDB(httpClient);
+        ollamaMistralEmbedding = new OllamaMistral(httpClient, serviceUrls);
+        chromaDBStore = new ChromaDB(httpClient, serviceUrls);
         textProcessing = new TextProcessing();
     }
 

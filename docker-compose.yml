@@ -1,0 +1,95 @@
+# ניתן להסיר את השורה הבאה אם הדוקר-קומפוז שלך חדש ונותן אזהרה:
+# version: '3.8'
+
+services:
+  # --- שירות ה-Gateway (היחיד שנגיש מבחוץ) ---
+  gateway-service:
+    build:
+      context: ./GatewayService
+      dockerfile: Dockerfile
+    ports:
+      # חשוב: מפה את פורט המארח 9150 לפורט הפנימי 8080 (אם זה הפורט שהאפליקציה מאזינה לו)
+      - "9000:8080" # מארח:9150 -> קונטיינר:8080
+    environment:
+      # - ASPNETCORE_ENVIRONMENT=Development
+      # חשוב: ודא שהאפליקציה מאזינה ל-8080 בתוך הקונטיינר.
+      # אם היתה לך שורה אחרת כמו http://+:5000, נסה להסיר אותה או לשנות אותה ל-8080
+      - ASPNETCORE_URLS=http://+:8080 # הגדר שהאפליקציה תאזין לפורט 8080 מכל ממשקי הרשת בקונטיינר
+      # הגדרות URL עבור השרתים הפנימיים שהגייטווי פונה אליהם:
+      - ServiceUrls:AIAdvisor=http://aiadvisor-service:8080/api/AI/ # שינוי ל-8080
+      - ServiceUrls:MarketData=http://marketdata-service:8080/api/MarketData/ # שינוי ל-8080
+      - ServiceUrls:StockManagement=http://stockmanagement-service:8080/api/Stock/ # שינוי ל-8080
+      - ServiceUrls:UserV2=http://userv2-service:8080/api/v2/User/ # שינוי ל-8080
+    volumes:
+      - ./GatewayService:/app_source
+
+  # --- שירות AI Advisor (פנימי) ---
+  aiadvisor-service:
+    build:
+      context: ./AIAdvisorService
+      dockerfile: Dockerfile
+    ports:
+      - "9050:8080" # מארח:9140 -> קונטיינר:8080
+    environment:
+      # - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080 # שינוי ל-8080
+      - ServiceUrls:Ollama=http://ollama:11434
+      - ServiceUrls:ChromaDB=http://chromadb:8000
+    volumes:
+      - ./AIAdvisorService:/app_source
+      - "C:/ollamadata:/app_data" # מיפוי נתיב מקומי לנתיב בקונטיינר 
+
+  # --- שירות Market Data (פנימי) ---
+  marketdata-service:
+    build:
+      context: ./MarketDataService
+      dockerfile: Dockerfile
+    environment:
+      # - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080 # שינוי ל-8080
+    volumes:
+      - ./MarketDataService:/app_source
+
+  # --- שירות Stock Management (פנימי) ---
+  stockmanagement-service:
+    build:
+      context: ./StockManagementService
+      dockerfile: Dockerfile
+    environment:
+      # - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080 # שינוי ל-8080
+    volumes:
+      - ./StockManagementService:/app_source
+
+  # --- שירות User V2 (פנימי) ---
+  userv2-service:
+    build:
+      context: ./UserManagementService # וודא שזה שם התיקייה הנכון
+      dockerfile: Dockerfile
+    ports:
+      - "9150:8080" # מארח:8080 -> קונטיינר:8080
+    environment:
+      # - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080 # שינוי ל-8080
+    volumes:
+      - ./UserManagementService:/app_source
+
+  # --- Ollama ---
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - "C:/ollamadata:/root/.ollama"
+
+  # --- ChromaDB ---
+  chromadb:
+    image: ghcr.io/chroma-core/chroma:latest
+    ports:
+      - "8000:8000"
+    volumes:
+      - chromadb_data:/app/chroma/chroma-data
+
+volumes:
+  ollama_data:
+  chromadb_data:

@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Microsoft.Extensions.Options;
 
 namespace AIManager;
 
@@ -10,12 +11,14 @@ internal class ChromaDB
 {
     private readonly HttpClient _httpClient;
     //private const string CollectionName = "stock_advice";
-    private readonly string CollectionID = "29d040ac-89e2-4d55-9636-ad99f807d627";
-    private readonly string ChromaEndpoint = "http://localhost:8000/api/v2/tenants/default_tenant/databases/default_database";
+    private readonly string CollectionID = "c3a37a72-0b43-4e91-a765-299d6b81eda2";
+    //private readonly string ChromaEndpoint = "http://localhost:8000/api/v2/tenants/default_tenant/databases/default_database";
+    private readonly string ChromaEndpoint;
 
-    public ChromaDB(HttpClient httpClient)
+    public ChromaDB(HttpClient httpClient, IOptions<ServiceUrlsConfig> serviceUrls)
     {
         _httpClient = httpClient;
+        ChromaEndpoint = serviceUrls.Value.ChromaEndpoint;
     }
 
     public async Task<string> StoreEmbeddingVector(List<string> chunks, List<string> ids, List<List<float>> embeddings)

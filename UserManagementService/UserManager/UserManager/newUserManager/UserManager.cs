@@ -17,6 +17,7 @@ namespace UserManager.newUserManager
         {
             if (!IsValidEmail(email))
             {
+                
                 throw new ArgumentException("Invalid email format.");
             }
 
@@ -52,12 +53,12 @@ namespace UserManager.newUserManager
             var user = _context.Users.FirstOrDefault(u => u.Email == email);
             if (user == null || !user.VerifyPassword(password))
             {
-                throw new ArgumentException("Invalid email or password.");
+                return false;
             }
 
             if (!IsValidEmail(newEmail))
             {
-                throw new ArgumentException("Invalid email format.");
+                return false;
             }
 
             user.Email = newEmail;

@@ -1,4 +1,5 @@
 ﻿using GatewayModel.Stocks;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -11,12 +12,14 @@ namespace GatewayManager
 {
     internal class MarketDataGateway
     {
-        private readonly string marketDataServiceURL = "http://localhost:9350/api/MarketData";
+        //private readonly string marketDataServiceURL = "http://localhost:9350/api/MarketData";
+        private readonly string marketDataServiceURL;
         private HttpClient httpClient;
 
-        internal MarketDataGateway(HttpClient httpClient)
+        internal MarketDataGateway(HttpClient httpClient, IOptions<ServiceUrlsConfig> serviceUrls)
         {
             this.httpClient = httpClient;
+            marketDataServiceURL = serviceUrls.Value.marketDataServiceURL;
         }
 
         internal async Task<CurrentData> GetCurrentStockData(string stockSymbol)

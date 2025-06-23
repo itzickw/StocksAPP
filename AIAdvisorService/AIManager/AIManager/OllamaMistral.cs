@@ -1,17 +1,20 @@
 ﻿using AIModel;
 using System.Text;
 using System.Text.Json;
-
+using Microsoft.Extensions.Options;
 
 namespace AIManager;
 
 internal class OllamaMistral
 {
-    private const string OllamaEndpoint = "http://localhost:11434/api/";
+    //private const string OllamaEndpoint = "http://localhost:11434/api/";
+    private string OllamaEndpoint;
     private readonly HttpClient _httpClient;
-    public OllamaMistral(HttpClient httpClient)
+
+    public OllamaMistral(HttpClient httpClient, IOptions<ServiceUrlsConfig> serviceUrls)
     {
         _httpClient = httpClient;
+        OllamaEndpoint = serviceUrls.Value.OllamaEndpoint;
     }
 
 
@@ -40,7 +43,7 @@ internal class OllamaMistral
         var embeddings = new List<List<float>>();
         foreach (var chunk in chunks)
         {
-            var embeddingRequest = new { model = "mistral:latest", prompt = chunk };
+            var embeddingRequest = new { model = "phi3:mini", prompt = chunk };
 
             var jsonContent = JsonSerializer.Serialize(embeddingRequest);
 
@@ -67,7 +70,7 @@ internal class OllamaMistral
         // יצירת embedding לשאלה
         var embeddingRequest = new
         {
-            model = "mistral:latest",
+            model = "phi3:mini",
             prompt = query
         };
 
@@ -85,7 +88,7 @@ internal class OllamaMistral
     {
         var answerRequest = new
         {
-            model = "mistral:latest",
+            model = "phi3:mini",
             prompt = query,
             stream = false
         };
