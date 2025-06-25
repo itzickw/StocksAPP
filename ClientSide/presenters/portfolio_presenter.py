@@ -125,7 +125,7 @@ class PortfolioPresenter(QObject):
                 password,
                 symbol,
                 quantity,
-                "BUY"
+                "Buy"
             )
             
             # Update portfolio after transaction
@@ -163,7 +163,7 @@ class PortfolioPresenter(QObject):
                 password,
                 symbol,
                 quantity,
-                "SELL"
+                "Sell"
             )
             
             # Update portfolio after transaction

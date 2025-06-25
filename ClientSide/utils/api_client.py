@@ -201,7 +201,7 @@ class ApiClient:
         password = password or self.user_password
         if not email or not password:
             raise ValueError("Email and password are required to fetch holdings")
-        url = f"{self.base_url}/holding" # Use POST endpoint as requested
+        url = f"{self.base_url}/api/StockManagement/holding" # Use POST endpoint as requested
         data = {
             "email": email,
             "password": password

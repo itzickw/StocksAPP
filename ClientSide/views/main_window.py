@@ -46,6 +46,17 @@ class MainWindow(QMainWindow):
         self.main_layout.setContentsMargins(0, 0, 0, 0)
         self.main_layout.setSpacing(0)
         self.setCentralWidget(self.central_widget)
+        self.setStyleSheet("""
+            QMainWindow {
+                background-color: #1e1e1e;
+            }
+            QWidget {
+                background-color: #1e1e1e;
+                color: #FFFFFF;
+                font-family: 'Poppins', sans-serif;
+            }
+            """)
+
         
         # Create navigation bar
         self.navigation_bar = NavigationBar()
