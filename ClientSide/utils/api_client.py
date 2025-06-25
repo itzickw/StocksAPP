@@ -27,13 +27,19 @@ class ApiClient:
         """Set user ID after login"""
         self.user_id = user_id
     
+    def clear_credentials(self):
+        """Clear user credentials on logout"""
+        self.token = None
+        self.user_id = None
+        self.user_email = None
+        self.user_password = None
+    
     def _get_headers(self) -> Dict[str, str]:
         """Get headers for API requests"""
         headers = {
             "Content-Type": "application/json"
         }
-        # Note: The API documentation doesn't explicitly mention bearer tokens for all endpoints.
-        # If the /holding and /transactions endpoints don't require a token, this might need adjustment.
+        # Include token in headers if available, but don't rely on it for session state
         if self.token:
             headers["Authorization"] = f"Bearer {self.token}"
         return headers
@@ -50,7 +56,7 @@ class ApiClient:
             try:
                 error_data = response.json()
                 if isinstance(error_data, dict) and "message" in error_data:
-                    error_message = f"{error_message} - {error_data["message"]}"
+                    error_message = f"{error_message} - {error_data['message']}"
                 elif isinstance(error_data, str):
                      error_message = f"{error_message} - {error_data}"
             except:
@@ -77,12 +83,25 @@ class ApiClient:
         }
         response = requests.post(url, headers=self._get_headers(), json=data)
         result = self._handle_response(response)
-        # Assuming the response contains token information
-        if isinstance(result, dict) and "token" in result:
-            self.set_token(result["token"])
-        # Store credentials after successful login
-        self.set_user_credentials(email, password)
-        return result
+        
+        # Only store credentials if login was successful
+        if isinstance(result, dict) and result.get("success") == True:
+            self.set_user_credentials(email, password)
+            
+            # Store token if available, but don't rely on it for session state
+            if "token" in result:
+                self.set_token(result["token"])
+            
+            return result
+        else:
+            # Clear any existing credentials on failed login
+            self.clear_credentials()
+            raise Exception(f"Login failed: {result.get('message', 'Invalid credentials')}")
+    
+    def logout_user(self):
+        """Logout user by clearing credentials"""
+        self.clear_credentials()
+        return {"success": True}
     
     def get_user_id(self, email: str, password: str) -> Any:
         """Get user ID using V2 endpoint"""
@@ -150,7 +169,13 @@ class ApiClient:
         """Get stock history for a symbol and range"""
         url = f"{self.base_url}/api/StockData/stock-history/{symbol}/{range_days}"
         response = requests.get(url, headers=self._get_headers())
-        return self._handle_response(response)
+        try:
+            return self._handle_response(response)
+        except Exception as e:
+            # Special handling for stock history errors
+            print(f"Error fetching stock history: {str(e)}")
+            # Return empty list instead of raising exception
+            return []
     
     def get_stock_weekly_history(self, symbol: str, range_days: int, interval: int) -> Any:
         """Get stock weekly history for a symbol, range, and interval"""
@@ -161,7 +186,13 @@ class ApiClient:
             "interval": interval
         }
         response = requests.get(url, headers=self._get_headers(), params=params)
-        return self._handle_response(response)
+        try:
+            return self._handle_response(response)
+        except Exception as e:
+            # Special handling for stock history errors
+            print(f"Error fetching stock weekly history: {str(e)}")
+            # Return empty list instead of raising exception
+            return []
     
     # StockManagement API endpoints
     def get_user_holdings(self, email: Optional[str] = None, password: Optional[str] = None) -> Any:
@@ -178,42 +209,19 @@ class ApiClient:
         response = requests.post(url, headers=self._get_headers(), json=data)
         return self._handle_response(response)
     
-    # Keep the old post_user_holdings method if it's for a different purpose (e.g., creation)
-    # Renaming it to avoid confusion if needed, but based on the name, it seems redundant now.
-    # def post_user_holdings(self, email: str, password: str) -> Any:
-    #     """Post user holdings"""
-    #     url = f"{self.base_url}/holding"
-    #     data = {
-    #         "email": email,
-    #         "password": password
-    #     }
-    #     response = requests.post(url, headers=self._get_headers(), json=data)
-    #     return self._handle_response(response)
-    
     def get_user_transactions(self, email: Optional[str] = None, password: Optional[str] = None) -> Any:
         """Get user transactions using email and password"""
         email = email or self.user_email
         password = password or self.user_password
         if not email or not password:
             raise ValueError("Email and password are required to fetch transactions")
-        url = f"{self.base_url}/transactions" # Use POST endpoint as requested
+        url = f"{self.base_url}/api/StockManagement/transactions" # Use POST endpoint as requested
         data = {
             "email": email,
             "password": password
         }
         response = requests.post(url, headers=self._get_headers(), json=data)
         return self._handle_response(response)
-    
-    # Keep the old post_user_transactions method if it's for a different purpose.
-    # def post_user_transactions(self, email: str, password: str) -> Any:
-    #     """Post user transactions"""
-    #     url = f"{self.base_url}/transactions"
-    #     data = {
-    #         "email": email,
-    #         "password": password
-    #     }
-    #     response = requests.post(url, headers=self._get_headers(), json=data)
-    #     return self._handle_response(response)
     
     def create_transaction(self, client_id: int, stock_symbol: str, quantity: float, transaction_type: str) -> Any:
         """Create a new transaction using client ID"""

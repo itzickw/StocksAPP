@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 [ApiController]
 [Route("api/[controller]")]
 public class MarketDataController : ControllerBase
-{    
+{
     private readonly AlphaVantageService _alphaVantageService;
 
     public MarketDataController(AlphaVantageService alphaVantageService)
-    {       
+    {
         _alphaVantageService = alphaVantageService;
     }
 

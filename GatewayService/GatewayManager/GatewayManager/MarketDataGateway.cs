@@ -43,7 +43,7 @@ namespace GatewayManager
         {
             var stockResponse = await httpClient.GetAsync($"{marketDataServiceURL}/{stockSymbol}/{range}");
             var response = await stockResponse.Content.ReadAsStringAsync();
-            return ParseStockHistory(response);        
+            return ParseStockHistory(response);
         }
 
         internal async Task<List<StockPrice>> GetStockPeriodWeeklyHistory(string stockSymbol, int range, int interval)
@@ -55,7 +55,7 @@ namespace GatewayManager
             return ParseStockHistory(response);
         }
 
-        private static  List<StockPrice> ParseStockHistory(string jsonResponse)
+        private static List<StockPrice> ParseStockHistory(string jsonResponse)
         {
             var stockPrices = new List<StockPrice>();
             var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };

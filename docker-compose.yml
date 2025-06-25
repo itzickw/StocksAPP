@@ -44,6 +44,8 @@ services:
     build:
       context: ./MarketDataService
       dockerfile: Dockerfile
+    ports:
+      - "9350:8080" # מארח:9100 -> קונטיינר:8080
     environment:
       # - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:8080 # שינוי ל-8080

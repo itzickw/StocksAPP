@@ -1,6 +1,5 @@
 from PySide6.QtCore import QObject, Signal, Slot
-from typing import Dict, Any, List
-import datetime
+from typing import Dict, Any
 
 class StockChartPresenter(QObject):
     """
@@ -36,29 +35,41 @@ class StockChartPresenter(QObject):
             # Convert range text to days
             range_days = self._get_range_days(range_text)
             
-            # Get stock history data
-            stock_history = self.model.get_stock_history(symbol, range_days)
-            
-            # Process data for chart based on the new structure
-            chart_data = self._process_data_for_chart(stock_history)
-            
-            # Update chart based on chart type
-            if chart_type == "Line":
-                self.view.update_line_chart(chart_data)
-            elif chart_type == "Candlestick":
-                # Candlestick chart requires OHLC data, which is not available from this endpoint
-                # Show an error or disable the option? For now, show line chart and inform user.
-                self.view.show_error("Candlestick chart requires OHLC data, which is not available from this endpoint. Displaying Line chart instead.")
-                self.view.update_line_chart(chart_data)
-                # Optionally, disable the candlestick option or switch back to Line
-                # self.view.chart_type_combo.setCurrentText("Line") 
-            
-            self.chart_updated.emit()
-            
+            # Get stock history data with improved error handling
+            try:
+                stock_history = self.model.get_stock_history(symbol, range_days)
+                
+                # Check if we got valid data
+                if not stock_history or not isinstance(stock_history, list):
+                    self.view.show_error(f"No valid data received for {symbol}")
+                    self.view.clear_chart()
+                    return
+                    
+                # Process data for chart based on the new structure
+                chart_data = self._process_data_for_chart(stock_history)
+                
+                # Update chart based on chart type
+                if chart_type == "Line":
+                    self.view.update_line_chart(chart_data)
+                elif chart_type == "Candlestick":
+                    # Candlestick chart requires OHLC data, which is not available from this endpoint
+                    # Show an error or disable the option? For now, show line chart and inform user.
+                    self.view.show_error("Candlestick chart requires OHLC data, which is not available from this endpoint. Displaying Line chart instead.")
+                    self.view.update_line_chart(chart_data)
+                
+                self.chart_updated.emit()
+                
+            except Exception as e:
+                error_message = str(e)
+                self.chart_update_failed.emit(error_message)
+                self.view.show_error(f"Failed to update chart: {error_message}")
+                self.view.clear_chart()
+                
         except Exception as e:
             error_message = str(e)
             self.chart_update_failed.emit(error_message)
             self.view.show_error(f"Failed to update chart: {error_message}")
+            self.view.clear_chart()
     
     def _get_range_days(self, range_text: str) -> int:
         """Convert range text to number of days"""
@@ -77,17 +88,21 @@ class StockChartPresenter(QObject):
         else:
             return 30  # Default to 1 month
     
-    def _process_data_for_chart(self, stock_history: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    def _process_data_for_chart(self, stock_history: list) -> list:
         """Process stock history data (date, closePrice) for chart display"""
         processed_data = []
         
         if not stock_history or not isinstance(stock_history, list):
-            # Handle empty or invalid data - maybe return empty list or raise error
+            # Handle empty or invalid data
             print("Warning: Received empty or invalid stock history data.")
             return []
         
         for item in stock_history:
             # Adapt to the actual API response structure: date, closePrice
+            if not isinstance(item, dict):
+                print(f"Warning: Skipping invalid data point: {item}")
+                continue
+                
             date_str = item.get("date")
             close_price = item.get("closePrice")
             

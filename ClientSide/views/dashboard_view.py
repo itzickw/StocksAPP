@@ -14,6 +14,36 @@ class DashboardView(QWidget):
         self.setup_ui()
         
     def setup_ui(self):
+        self.setStyleSheet("""
+            QWidget {
+                background-color: #f0f4f8;
+                font-family: 'Segoe UI', sans-serif;
+            }
+            QLabel {
+                color: #1a1a1a;
+            }
+            QLabel[heading="true"] {
+                font-size: 18px;
+                font-weight: bold;
+                color: #0d47a1;
+                margin-bottom: 8px;
+            }
+            QPushButton {
+                background-color: #1976d2;
+                color: white;
+                border: none;
+                padding: 8px 18px;
+                border-radius: 8px;
+                font-size: 14px;
+            }
+            QPushButton:hover {
+                background-color: #1565c0;
+            }
+            QPushButton:pressed {
+                background-color: #0d47a1;
+            }
+        """)
+
         # Create main layout
         main_layout = QVBoxLayout(self)
         main_layout.setContentsMargins(10, 10, 10, 10)
@@ -35,6 +65,7 @@ class DashboardView(QWidget):
         market_chart_layout.setContentsMargins(0, 0, 0, 0)
         
         market_chart_header = QLabel("Market Overview")
+        market_chart_header.setProperty("heading", True)
         market_chart_header.setFont(QFont("Arial", 12, QFont.Bold))
         market_chart_layout.addWidget(market_chart_header)
         

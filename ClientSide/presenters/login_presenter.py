@@ -18,43 +18,74 @@ class LoginPresenter(QObject):
         self.model = model
         
         # Connect view signals to presenter slots
-        self.view.login_requested.connect(self.login)
-        self.view.register_requested.connect(self.register)
+        self.view.login_button.clicked.connect(self.login)
+        self.view.register_button.clicked.connect(self.register)
         
-    @Slot(str, str)
-    def login(self, email: str, password: str):
-        """Handle login request"""
+        # Connect model signals to presenter slots
+        self.model.login_successful.connect(self.on_login_successful)
+        self.model.login_failed.connect(self.on_login_failed)
+        self.model.registration_successful.connect(self.on_registration_successful)
+        self.model.registration_failed.connect(self.on_registration_failed)
+        
+    @Slot()
+    def login(self):
+        """Handle login button click"""
+        email = self.view.email_input.text().strip()
+        password = self.view.password_input.text()
+        
+        if not email:
+            self.view.show_error("Please enter your email")
+            return
+        
+        if not password:
+            self.view.show_error("Please enter your password")
+            return
+        
         try:
-            result = self.model.login(email, password)
-            if self.model.is_logged_in:
-                self.login_successful.emit()
-            else:
-                error_message = "Login failed"
-                if isinstance(result, dict) and "message" in result:
-                    error_message = result["message"]
-                self.login_failed.emit(error_message)
-                self.view.show_error(error_message)
+            self.model.login(email, password)
         except Exception as e:
-            error_message = str(e)
-            self.login_failed.emit(error_message)
-            self.view.show_error(error_message)
+            # Error will be handled by on_login_failed via signal
+            pass
     
-    @Slot(str, str)
-    def register(self, email: str, password: str):
-        """Handle registration request"""
+    @Slot()
+    def register(self):
+        """Handle register button click"""
+        email = self.view.email_input.text().strip()
+        password = self.view.password_input.text()
+        
+        if not email:
+            self.view.show_error("Please enter your email")
+            return
+        
+        if not password:
+            self.view.show_error("Please enter your password")
+            return
+        
         try:
-            result = self.model.register(email, password)
-            if isinstance(result, dict) and result.get("success", False):
-                self.registration_successful.emit()
-                self.view.show_success("Registration successful. You can now login.")
-                self.view.clear_fields()
-            else:
-                error_message = "Registration failed"
-                if isinstance(result, dict) and "message" in result:
-                    error_message = result["message"]
-                self.registration_failed.emit(error_message)
-                self.view.show_error(error_message)
+            self.model.register(email, password)
         except Exception as e:
-            error_message = str(e)
-            self.registration_failed.emit(error_message)
-            self.view.show_error(error_message)
+            # Error will be handled by on_registration_failed via signal
+            pass
+    
+    @Slot(dict)
+    def on_login_successful(self, user_data: Dict[str, Any]):
+        """Handle successful login"""
+        self.view.clear_inputs()
+        self.login_successful.emit()
+    
+    @Slot(str)
+    def on_login_failed(self, error_message: str):
+        """Handle failed login"""
+        self.view.show_error(f"Login failed: {error_message}")
+    
+    @Slot(dict)
+    def on_registration_successful(self, user_data: Dict[str, Any]):
+        """Handle successful registration"""
+        self.view.clear_inputs()
+        self.view.show_success("Registration successful! You can now log in.")
+        self.registration_successful.emit()
+    
+    @Slot(str)
+    def on_registration_failed(self, error_message: str):
+        """Handle failed registration"""
+        self.view.show_error(f"Registration failed: {error_message}")

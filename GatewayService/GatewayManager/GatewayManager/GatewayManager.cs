@@ -1,4 +1,5 @@
-﻿using GatewayModel.Stocks;
+﻿using GatewayModel;
+using GatewayModel.Stocks;
 using GatewayModel.User;
 using Microsoft.Extensions.Options;
 using System;
@@ -16,7 +17,7 @@ namespace GatewayManager
         private readonly MarketDataGateway marketDataGateway;
         private readonly AIAdvisorGateway aiAdvisorGateway;
 
-        public GatewayManager(HttpClient httpClient, IOptions<ServiceUrlsConfig> serviceUrls )
+        public GatewayManager(HttpClient httpClient, IOptions<ServiceUrlsConfig> serviceUrls)
         {
             userGateway = new UserGateway(httpClient, serviceUrls);
             stocksGateway = new StocksGateway(httpClient, serviceUrls);
@@ -33,20 +34,23 @@ namespace GatewayManager
         public Task<string> UserPasswordUpdate(User user)
             => userGateway.UserPasswordUpdate(user);
 
-        public Task<string> UserRegisterV2(User user)
-            => userGateway.UserRegisterV2(user);
+        public async Task<StandardApiResponse> UserRegisterV2(User user)
+            => await userGateway.UserRegisterV2(user);
 
-        public Task<string> UserDeleteV2(string email, string password)
-            => userGateway.UserDeleteV2(email, password);
+        public async Task<StandardApiResponse> UserDeleteV2(string email, string password)
+            => await userGateway.UserDeleteV2(email, password);
 
-        public Task<string> UserPasswordUpdateV2(UserUpdate user)
-            => userGateway.UserPasswordUpdateV2(user);
+        public async Task<StandardApiResponse> UserPasswordUpdateV2(UserUpdate user)
+            => await userGateway.UserPasswordUpdateV2(user);
 
-        public Task<string> UserLoginV2(User user)
-            => userGateway.UserLoginV2(user);
+        public async Task<StandardApiResponse> UserLoginV2(User user)
+            => await userGateway.UserLoginV2(user);
 
-        public Task<string> UserIDV2(User user)
-            => userGateway.UserIDV2(user);
+        public async Task<string> GetUserID(User user)
+            => await userGateway.GetUserID(user);
+
+        public async Task<StandardApiResponse> UserIDV2(User user)
+            => await userGateway.UserIDV2(user);
 
         public Task<decimal> GetStockPrice(string stockSymbol)
         {

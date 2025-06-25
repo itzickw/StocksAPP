@@ -2,6 +2,7 @@
 using GatewayModel.Stocks;
 using GatewayModel.User;
 using System.ComponentModel.DataAnnotations;
+using GatewayModel;
 
 namespace GatewayController.Controllers
 {
@@ -35,7 +36,8 @@ namespace GatewayController.Controllers
         {
             try
             {
-                string id = await _gatewayManager.UserIDV2(user);
+                StandardApiResponse standardApiResponse = await _gatewayManager.UserIDV2(user);
+                string id = await _gatewayManager.GetUserID(user);
                 string response = await _gatewayManager.GetUserHoldingStocks(id);
                 return Ok(response);
             }
@@ -64,7 +66,7 @@ namespace GatewayController.Controllers
         {
             try
             {
-                string id = await _gatewayManager.UserIDV2(user);
+                string id = await _gatewayManager.GetUserID(user);
                 string response = await _gatewayManager.GetUserTransactions(id);
                 return Ok(response);
             }
@@ -93,7 +95,7 @@ namespace GatewayController.Controllers
         {
             try
             {
-                string id = await _gatewayManager.UserIDV2(new User(){ Email = t.Email, Password = t.Password });
+                string id = await _gatewayManager.GetUserID(new User() { Email = t.Email, Password = t.Password });
                 TransactionGet transaction = new TransactionGet()
                 {
                     ClientId = int.Parse(id),

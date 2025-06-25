@@ -144,7 +144,14 @@ class StockChartView(QWidget):
              
         self.chart.addAxis(axis_y, Qt.AlignLeft)
         series.attachAxis(axis_y)
-        
+    
+    def clear_chart(self):
+        """Clear the chart and display a message"""
+        self.chart.removeAllSeries()
+        for axis in self.chart.axes():
+            self.chart.removeAxis(axis)
+        self.chart.setTitle("No data available")
+    
     def update_candlestick_chart(self, data):
         """Update the chart with candlestick series data (Placeholder - Not fully functional with current API)"""
         # Clear existing series and axes
