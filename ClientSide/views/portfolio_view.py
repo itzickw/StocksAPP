@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QTableWidget, QTableWidgetItem, QHeaderView, QSplitter, QMessageBox, QGridLayout, QComboBox, QDoubleSpinBox, QSizePolicy
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QTableWidget, QTableWidgetItem, QHeaderView, QSplitter, QMessageBox, QGridLayout, QComboBox, QDoubleSpinBox, QSizePolicy, QSpacerItem
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QFont, QPainter
 from PySide6.QtCharts import QChart, QChartView, QPieSeries
@@ -137,6 +137,7 @@ class PortfolioView(QWidget):
         
         symbol_label = QLabel("Symbol:")
         self.symbol_combo = QComboBox()
+        self.symbol_combo.setStyleSheet("QComboBox { border: 2px solid #0078d7; border-radius: 4px; }")
         self.symbol_combo.setEditable(True)
         self.symbol_combo.addItems(["AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "META"])
         self.symbol_combo.setFixedWidth(120)
@@ -149,6 +150,7 @@ class PortfolioView(QWidget):
         quantity_box.setSpacing(2)
         quantity_label = QLabel("Quantity:")
         self.quantity_spin = QDoubleSpinBox()
+        self.quantity_spin.setStyleSheet("QDoubleSpinBox { border: 2px solid #0078d7; border-radius: 4px; }")
         self.quantity_spin.setMinimum(0.01)
         self.quantity_spin.setMaximum(10000)
         self.quantity_spin.setValue(1)
@@ -163,11 +165,15 @@ class PortfolioView(QWidget):
         self.sell_button.clicked.connect(self.on_sell_clicked)
 
         field_layout = QHBoxLayout()
+        field_layout.addSpacerItem(QSpacerItem(200, 0, QSizePolicy.Fixed, QSizePolicy.Minimum))
         field_layout.addLayout(symbol_box)
+        field_layout.addSpacerItem(QSpacerItem(50, 0, QSizePolicy.Fixed, QSizePolicy.Minimum))
         field_layout.addLayout(quantity_box)
-        field_layout.setSpacing(150)
+        field_layout.addSpacerItem(QSpacerItem(100, 0, QSizePolicy.Fixed, QSizePolicy.Minimum))
         field_layout.addWidget(self.buy_button)
         field_layout.addWidget(self.sell_button)
+        field_layout.addSpacerItem(QSpacerItem(200, 0, QSizePolicy.Fixed, QSizePolicy.Minimum))
+
 
         main_layout.addLayout(field_layout)
 
@@ -210,7 +216,7 @@ class PortfolioView(QWidget):
 
         for i, t in enumerate(transactions):
             self.transactions_table.insertRow(i)
-            self.transactions_table.setItem(i, 0, QTableWidgetItem(t.get('date', 'N/A')))
+            self.transactions_table.setItem(i, 0, QTableWidgetItem(t.get('timestamp', 'N/A')))
             self.transactions_table.setItem(i, 1, QTableWidgetItem(t.get('stockSymbol', 'N/A')))
             self.transactions_table.setItem(i, 2, QTableWidgetItem(t.get('transactionType', 'N/A')))
             self.transactions_table.setItem(i, 3, QTableWidgetItem(f"{t.get('quantity', 0.0):.2f}"))

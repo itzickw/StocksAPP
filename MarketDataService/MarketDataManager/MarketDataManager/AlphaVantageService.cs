@@ -14,8 +14,9 @@ namespace MarketDataManager
         private readonly HttpClient _httpClient;
         private readonly string _dailyUrl = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY";
         private readonly string _intradayUrl = "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY";
-        private readonly string _apiKey = "R5PGW5TWXOVEIYAO";
-
+        private readonly string _apiKey = "2Y5DWP9YTF6UTM46";
+        //private readonly string _apiKey = "E4EW01897YHVDVB5";
+        //private readonly string _apiKey = "R5PGW5TWXOVEIYAO";
         public AlphaVantageService(HttpClient httpClient)
         {
             _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));

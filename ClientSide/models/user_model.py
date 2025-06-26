@@ -22,8 +22,14 @@ class UserModel(QObject):
         """Register a new user"""
         try:
             result = self.api_client.register_user(email, password)
-            self.registration_successful.emit(result)
-            return result
+            if isinstance(result, dict) and result.get("success") == True:                
+                self.registration_successful.emit(result.get("message)"))
+                return result
+            elif isinstance(result, dict) and result.get("success") == False:
+                # Handle registration failure case
+                error_message = result.get("message")
+                self.registration_failed.emit(error_message)
+                raise Exception(error_message)
         except Exception as e:
             error_message = str(e)
             self.registration_failed.emit(error_message)
@@ -44,6 +50,12 @@ class UserModel(QObject):
                 self.user_data = result
                 self.login_successful.emit(result)
                 return result
+            elif isinstance(result, dict) and result.get("success") == False:
+                # Handle login failure case
+                error_message = result.get("message")
+                self.is_logged_in = False
+                self.login_failed.emit(error_message)
+                raise Exception(error_message)
             else:
                 # This should not happen as ApiClient should raise exception on failure
                 # But handle it just in case
